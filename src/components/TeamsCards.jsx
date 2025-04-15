@@ -2,13 +2,34 @@ import React from 'react';
 import UseTeam from '../hooks/UseTeam';
 import UseForm from '../hooks/UseForm';
 import { Info, NotePencil, Trash } from "@phosphor-icons/react";
-
-
+import Swal from 'sweetalert2';
 
 const TeamsCards = () => {
 
-    const {teams, loading, error} = UseTeam();
+    const {teams, loading, error, deleteTeam} = UseTeam();
     const {openForm} = UseForm();
+
+    const handleDelete = async (id) => {
+        const result = await Swal.fire({
+            title: 'Eliminar equipo', 
+            text: '¿Está seguro que desea eliminar el equipo de forma permanente?', 
+            icon: 'warning', 
+            showCancelButton: true, 
+            confirmButtonColor: '#d33', 
+            cancelButtonColor: '#3085d6', 
+            confirmButtonText: 'Eliminar', 
+            cancelButtonText: 'Cancelar'
+        });
+
+        if(result.isConfirmed){
+            try {
+                await deleteTeam(id);
+                Swal.fire('Eliminado', 'El equipo se ha eliminado.', 'success');
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un problema al eliminar el equipo', 'error');
+            }
+        }
+    }
 
     //const {teams, loading, error} = useTeamContext();
 
@@ -59,6 +80,7 @@ const TeamsCards = () => {
                             </button>
                             <button
                                 id='delete'
+                                onClick={() => handleDelete(team.id)}
                                 className='flex justify-center items-center'
                                 aria-label='Eliminar'
                             >
