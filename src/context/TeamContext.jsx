@@ -54,12 +54,24 @@ export const TeamProvider = ({children}) => {
         }
     }
 
+    const deleteTeam = async(id) => {
+        setLoading(true);
+        try {
+            const response = await axios.delete(`${apiUrl}/${id}`);
+            setTeams(teams => teams.filter(team => team.id !== id));
+        } catch (error) {
+            setError('Error al eliminar el equipo');
+        } finally{
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchAllTeams();
     }, []);
     
     return(
-        <TeamContext.Provider value={{teams, loading, error, fetchAllTeams, createTeam, updateTeam}}>
+        <TeamContext.Provider value={{teams, loading, error, fetchAllTeams, createTeam, updateTeam, deleteTeam}}>
             {children}
         </TeamContext.Provider>
     );
